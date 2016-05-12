@@ -50,52 +50,114 @@ private:
 	double		m_stopTime;
 	uint16_t	m_packetSize;
 	uint32_t    m_maxPacketCount;
-	double 		latency;
-	uint64_t 	rate;
-	double 		interval;
+	double 		m_latency;
+	uint64_t 	m_rate;
+	double 		m_interval;
+	
+	/* Contenedores de las redes */
+	NodeContainer router;
+	NodeContainer switches;
+	NodeContainer server;
+	NodeContainer printer;
+	NodeContainer admin;
+	NodeContainer wirelessPC;
+	NodeContainer pcT0;
+	NodeContainer pcT1;
+	NodeContainer pcT2;
+	NodeContainer pcT3;
+	NodeContainer pcT4;
+	NodeContainer pcT5;
+	NodeContainer ap;
 
+	/*Contenedor de los dispositivos de red */
+	NetDeviceContainer ndc_bridge_0;
+	NetDeviceContainer ndc_bridge_1;
+	NetDeviceContainer ndc_bridge_2;
+	NetDeviceContainer ndc_bridge_3;
+	NetDeviceContainer ndc_bridge_4;
+	NetDeviceContainer ndc_bridge_5;
+	NetDeviceContainer ndc_bridge_6;
+	NetDeviceContainer ndc_bridge_7;
+	NetDeviceContainer ndc_ap_0;
+	NetDeviceContainer ndc_ap_1;
+	NetDeviceContainer ndc_ap_2;
+	NetDeviceContainer ndc_r2_r3;
+	NetDeviceContainer ndc_r0_r2;
+	NetDeviceContainer ndc_r1_r2;
 
-	// Declaración de las funciones
-	void CreateTopology();	/// crea los nodos
+	/* Contenedor de las interfaces */
+	Ipv4InterfaceContainer iface_ndc_bridge_0;
+	Ipv4InterfaceContainer iface_ndc_bridge_1;
+	Ipv4InterfaceContainer iface_ndc_bridge_2;
+	Ipv4InterfaceContainer iface_ndc_bridge_3;
+	Ipv4InterfaceContainer iface_ndc_bridge_4;
+	Ipv4InterfaceContainer iface_ndc_bridge_5;
+	Ipv4InterfaceContainer iface_ndc_bridge_6;
+	Ipv4InterfaceContainer iface_ndc_bridge_7;
+	Ipv4InterfaceContainer iface_ndc_ap_0;
+	Ipv4InterfaceContainer iface_ndc_ap_1;
+	Ipv4InterfaceContainer iface_ndc_ap_2;
+	Ipv4InterfaceContainer iface_ndc_hub_4;
+	Ipv4InterfaceContainer iface_ndc_hub_5;
+	Ipv4InterfaceContainer iface_ndc_hub_6;
 
-	void InstallInternetStack(); /// Instala internet en los nodos
+	/* Declaración de las funciones */
 
-	void InstallAplications(); /// Instala las aplicaciones
+	void createTopology();	/// crea los nodos
+
+	void installInternetStack(); /// Instala internet en los nodos
+
+	void installAplications(); /// Instala las aplicaciones
 
 
 };
 
 /**
-@brief Crea y configura los nodos.
+@brief  Configura los parametros de la simulacion -- NO TERMINADO
 */
-void Simulation::CreateTopology() {
+Simulation::Simulation() {
+	// NO TERMINADO
+	m_startTime = 0.0;
+	m_stopTime = 12.0;
+	m_packetSize = 1024;
+	m_maxPacketCount = 640;
+	m_latency = 2.0;
+	m_rate = 1000000;
+	m_interval = 0.05;
+}
+
+
+
+/**
+  @brief  Configuracion de la siumacion desde los argumentos de la linea de comandos
+*/
+void Simulation::Configure(int argc, char *argv[]) {
+
+	CommandLine cmd;
+	cmd.Parse(argc, argv);
+
+	NS_LOG_DEBUG("Simulation Configure COMPLETE");
+}
+
+/**
+  @brief Crea y configura los nodos.
+*/
+void Simulation::createTopology() {
 
 	NS_LOG_INFO("Creating the nodes");
-	NodeContainer router;
+	// Asignacion de numero de nodos a su contenedor.
 	router.Create(4);
-	NodeContainer switches;
 	switches.Create(8);
-	NodeContainer server;
 	server.Create(2);
-	NodeContainer printer;
 	printer.Create(2);
-	NodeContainer admin;
 	admin.Create(1);
-	NodeContainer wirelessPC;
 	wirelessPC.Create(7);
-	NodeContainer pcT0;
 	pcT0.Create(5);
-	NodeContainer pcT1;
 	pcT1.Create(5);
-	NodeContainer pcT2;
 	pcT2.Create(5);
-	NodeContainer pcT3;
 	pcT3.Create(5);
-	NodeContainer pcT4;
 	pcT4.Create(5);
-	NodeContainer pcT5;
 	pcT5.Create(5);
-	NodeContainer ap;
 	ap.Create(3);
 
 	NS_LOG_INFO("Creating the links");
@@ -160,7 +222,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch0; //crea el switch
 	switch0.Install(switches.Get(0), BridgeDevices_bridge_0);
-	NetDeviceContainer ndc_bridge_0 = terminalDevices_bridge_0; //contiene toda las interfaces conectadas al switch
+	ndc_bridge_0 = terminalDevices_bridge_0; //contiene toda las interfaces conectadas al switch
 
 	NodeContainer all_bridge_1; //lo conectado al switch 1
 	all_bridge_1.Add(router.Get(0));
@@ -174,7 +236,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch1;
 	switch1.Install(switches.Get(1), BridgeDevices_bridge_1);
-	NetDeviceContainer ndc_bridge_1 = terminalDevices_bridge_1;
+	ndc_bridge_1 = terminalDevices_bridge_1;
 
 	NodeContainer all_bridge_2; //lo conectado al switch 2
 	all_bridge_2.Add(router.Get(0));
@@ -194,7 +256,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch2;
 	switch2.Install(switches.Get(2), BridgeDevices_bridge_2);
-	NetDeviceContainer ndc_bridge_2 = terminalDevices_bridge_2;
+	ndc_bridge_2 = terminalDevices_bridge_2;
 
 	NodeContainer all_bridge_3; //lo conectado al switch 3
 	all_bridge_3.Add(router.Get(0));
@@ -214,7 +276,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch3;
 	switch3.Install(switches.Get(3), BridgeDevices_bridge_3);
-	NetDeviceContainer ndc_bridge_3 = terminalDevices_bridge_3;
+	ndc_bridge_3 = terminalDevices_bridge_3;
 
 	NodeContainer all_bridge_4; //lo conectado al switch 4
 	all_bridge_4.Add(router.Get(1));
@@ -234,7 +296,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch4;
 	switch4.Install(switches.Get(4), BridgeDevices_bridge_4);
-	NetDeviceContainer ndc_bridge_4 = terminalDevices_bridge_4;
+	ndc_bridge_4 = terminalDevices_bridge_4;
 
 	NodeContainer all_bridge_5; //todo lo conectado al switch 5
 	all_bridge_5.Add(router.Get(1));
@@ -248,7 +310,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch5;
 	switch5.Install(switches.Get(5), BridgeDevices_bridge_5);
-	NetDeviceContainer ndc_bridge_5 = terminalDevices_bridge_5;
+	ndc_bridge_5 = terminalDevices_bridge_5;
 
 	NodeContainer all_bridge_6; //todo lo conectado al switch 6
 	all_bridge_6.Add(router.Get(1));
@@ -267,7 +329,7 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch6;
 	switch6.Install(switches.Get(6), BridgeDevices_bridge_6);
-	NetDeviceContainer ndc_bridge_6 = terminalDevices_bridge_6;
+	ndc_bridge_6 = terminalDevices_bridge_6;
 
 	NodeContainer all_bridge_7; //todo lo conectado al switch 7
 	all_bridge_7.Add(router.Get(1));
@@ -291,18 +353,17 @@ void Simulation::CreateTopology() {
 	}
 	BridgeHelper switch7;
 	switch7.Install(switches.Get(7), BridgeDevices_bridge_7);
-	NetDeviceContainer ndc_bridge_7 = terminalDevices_bridge_7;
+	ndc_bridge_7 = terminalDevices_bridge_7;
 
 
 	NodeContainer all_ap_0;
 	all_ap_0.Add(wirelessPC.Get(0));
 	all_ap_0.Add(wirelessPC.Get(1));
-	NetDeviceContainer ndc_ap_0;
 	Ssid ssid_ap_0 = Ssid("wifi-default-0");
 	WifiHelper wifi_ap_0 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_0 = NqosWifiMacHelper::Default();
 	wifi_ap_0.SetRemoteStationManager("ns3::ArfWifiManager");
-	wifiMac_ap_0.SetType("ns3::NqapWifiMac",
+	wifiMac_ap_0.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_0),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
@@ -319,12 +380,11 @@ void Simulation::CreateTopology() {
 	NodeContainer all_ap_1;
 	all_ap_1.Add(wirelessPC.Get(2));
 	all_ap_1.Add(wirelessPC.Get(3));
-	NetDeviceContainer ndc_ap_1;
 	Ssid ssid_ap_1 = Ssid("wifi-default-1");
 	WifiHelper wifi_ap_1 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_1 = NqosWifiMacHelper::Default();
 	wifi_ap_1.SetRemoteStationManager("ns3::ArfWifiManager");
-	wifiMac_ap_1.SetType("ns3::NqapWifiMac",
+	wifiMac_ap_1.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_1),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
@@ -342,12 +402,11 @@ void Simulation::CreateTopology() {
 	all_ap_2.Add(wirelessPC.Get(4));
 	all_ap_2.Add(wirelessPC.Get(5));
 	all_ap_2.Add(wirelessPC.Get(6));
-	NetDeviceContainer ndc_ap_2;
 	Ssid ssid_ap_2 = Ssid("wifi-default-2");
 	WifiHelper wifi_ap_2 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_2 = NqosWifiMacHelper::Default();
 	wifi_ap_2.SetRemoteStationManager("ns3::ArfWifiManager");
-	wifiMac_ap_2.SetType("ns3::NqapWifiMac",
+	wifiMac_ap_2.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_2),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
@@ -365,25 +424,33 @@ void Simulation::CreateTopology() {
 	NodeContainer all_r2_r3;
 	all_r2_r3.Add(router.Get(2));
 	all_r2_r3.Add(router.Get(3));
-	NetDeviceContainer ndc_r2_r3 = csma_r2_r3.Install(all_r2_r3);
+	ndc_r2_r3 = csma_r2_r3.Install(all_r2_r3);
 
 	NodeContainer all_r0_r2;
 	all_r0_r2.Add(router.Get(0));
 	all_r0_r2.Add(router.Get(2));
-	NetDeviceContainer ndc_r0_r2 = csma_r0_r2.Install(all_r0_r2);
+	ndc_r0_r2 = csma_r0_r2.Install(all_r0_r2);
 
 	NodeContainer all_r1_r2;
 	all_r1_r2.Add(router.Get(1));
 	all_r1_r2.Add(router.Get(2));
-	NetDeviceContainer ndc_r1_r2 = csma_r1_r2.Install(all_r1_r2);
+	ndc_r1_r2 = csma_r1_r2.Install(all_r1_r2);
+}
 
-
+/**
+  @brief Instala los protocolos necesarios para tener red entre los nodos, tambien asigna las ips.
+*/
+void Simulation::installInternetStack() {
+	
 	/* Install the IP stack. */
+	NS_LOG_INFO("Install IP stack");
 	InternetStackHelper internetStackH;
+	
 	internetStackH.Install(router.Get(0));
 	internetStackH.Install(router.Get(1));
 	internetStackH.Install(router.Get(2));
 	internetStackH.Install(router.Get(3));
+	
 	internetStackH.Install(switches.Get(0));
 	internetStackH.Install(switches.Get(1));
 	internetStackH.Install(switches.Get(2));
@@ -392,11 +459,15 @@ void Simulation::CreateTopology() {
 	internetStackH.Install(switches.Get(5));
 	internetStackH.Install(switches.Get(6));
 	internetStackH.Install(switches.Get(7));
+	
 	internetStackH.Install(server.Get(0));
 	internetStackH.Install(server.Get(1));
+	
 	internetStackH.Install(printer.Get(0));
 	internetStackH.Install(printer.Get(1));
+	
 	internetStackH.Install(admin.Get(0));
+	
 	internetStackH.Install(wirelessPC.Get(0));
 	internetStackH.Install(wirelessPC.Get(1));
 	internetStackH.Install(wirelessPC.Get(2));
@@ -404,91 +475,183 @@ void Simulation::CreateTopology() {
 	internetStackH.Install(wirelessPC.Get(4));
 	internetStackH.Install(wirelessPC.Get(5));
 	internetStackH.Install(wirelessPC.Get(6));
+	
 	internetStackH.Install(pcT0.Get(0));
 	internetStackH.Install(pcT0.Get(1));
 	internetStackH.Install(pcT0.Get(2));
 	internetStackH.Install(pcT0.Get(3));
 	internetStackH.Install(pcT0.Get(4));
+	
 	internetStackH.Install(pcT1.Get(0));
 	internetStackH.Install(pcT1.Get(1));
 	internetStackH.Install(pcT1.Get(2));
 	internetStackH.Install(pcT1.Get(3));
 	internetStackH.Install(pcT1.Get(4));
+	
 	internetStackH.Install(pcT2.Get(0));
 	internetStackH.Install(pcT2.Get(1));
 	internetStackH.Install(pcT2.Get(2));
 	internetStackH.Install(pcT2.Get(3));
 	internetStackH.Install(pcT2.Get(4));
+	
 	internetStackH.Install(pcT3.Get(0));
 	internetStackH.Install(pcT3.Get(1));
 	internetStackH.Install(pcT3.Get(2));
 	internetStackH.Install(pcT3.Get(3));
 	internetStackH.Install(pcT3.Get(4));
+	
 	internetStackH.Install(pcT4.Get(0));
 	internetStackH.Install(pcT4.Get(1));
 	internetStackH.Install(pcT4.Get(2));
 	internetStackH.Install(pcT4.Get(3));
 	internetStackH.Install(pcT4.Get(4));
+	
 	internetStackH.Install(pcT5.Get(0));
 	internetStackH.Install(pcT5.Get(1));
 	internetStackH.Install(pcT5.Get(2));
 	internetStackH.Install(pcT5.Get(3));
 	internetStackH.Install(pcT5.Get(4));
+	
 	internetStackH.Install(ap.Get(0));
 	internetStackH.Install(ap.Get(1));
 	internetStackH.Install(ap.Get(2));
 
 
 	/* IP assign. */
+	NS_LOG_INFO("Assign IP Addresses.");
 	Ipv4AddressHelper ipv4;
+
+	// Switch 0
 	ipv4.SetBase("10.0.0.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_0 = ipv4.Assign(ndc_bridge_0);
+	iface_ndc_bridge_0 = ipv4.Assign(ndc_bridge_0);
+
+	// Switch 1
 	ipv4.SetBase("10.0.1.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_1 = ipv4.Assign(ndc_bridge_1);
+	iface_ndc_bridge_1 = ipv4.Assign(ndc_bridge_1);
+
+	// Switch 2
 	ipv4.SetBase("10.0.2.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_2 = ipv4.Assign(ndc_bridge_2);
+	iface_ndc_bridge_2 = ipv4.Assign(ndc_bridge_2);
+
+	// Switch 3
 	ipv4.SetBase("10.0.3.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_3 = ipv4.Assign(ndc_bridge_3);
+	iface_ndc_bridge_3 = ipv4.Assign(ndc_bridge_3);
+
+	// Switch 4
 	ipv4.SetBase("10.0.4.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_4 = ipv4.Assign(ndc_bridge_4);
+	iface_ndc_bridge_4 = ipv4.Assign(ndc_bridge_4);
+
+	// Switch 5
 	ipv4.SetBase("10.0.5.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_5 = ipv4.Assign(ndc_bridge_5);
+	iface_ndc_bridge_5 = ipv4.Assign(ndc_bridge_5);
+
+	// Switch 6
 	ipv4.SetBase("10.0.8.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_6 = ipv4.Assign(ndc_bridge_6);
+	iface_ndc_bridge_6 = ipv4.Assign(ndc_bridge_6);
+
+	// Switch 7
 	ipv4.SetBase("10.0.9.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_bridge_7 = ipv4.Assign(ndc_bridge_7);
+	iface_ndc_bridge_7 = ipv4.Assign(ndc_bridge_7);
+
+	// Access Point 0
 	ipv4.SetBase("10.0.17.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_ap_0 = ipv4.Assign(ndc_ap_0);
+	iface_ndc_ap_0 = ipv4.Assign(ndc_ap_0);
+
+	// Access Point 1
 	ipv4.SetBase("10.0.6.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_ap_1 = ipv4.Assign(ndc_ap_1);
+	iface_ndc_ap_1 = ipv4.Assign(ndc_ap_1);
+
+	// Access Point 2
 	ipv4.SetBase("10.0.7.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_ap_2 = ipv4.Assign(ndc_ap_2);
+	iface_ndc_ap_2 = ipv4.Assign(ndc_ap_2);
+
+	// Router 2-3
 	ipv4.SetBase("10.0.12.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_hub_4 = ipv4.Assign(ndc_r2_r3);
+	iface_ndc_hub_4 = ipv4.Assign(ndc_r2_r3);
+
+	// Router 0-2
 	ipv4.SetBase("10.0.14.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_hub_5 = ipv4.Assign(ndc_r0_r2);
+	iface_ndc_hub_5 = ipv4.Assign(ndc_r0_r2);
+
+	// Router 1-2
 	ipv4.SetBase("10.0.15.0", "255.255.255.0");
-	Ipv4InterfaceContainer iface_ndc_hub_6 = ipv4.Assign(ndc_r1_r2);
-
+	iface_ndc_hub_6 = ipv4.Assign(ndc_r1_r2);
 }
 
 /**
-@brief Instala los protocolos necesarios para tener red entre los nodos, también asigna las ips.
+  @brief Instala las distintas aplicaciones que reciven/generan los datos entre los distintos nodos.
 */
-void Simulation::InstallInternetStack() {
-	// pendiente...
+void Simulation::installAplications() {
+	// NO TERMINADO, solo prueba para ver si funciona el programa...
+	// SERVIDOR --> pcT0(1) 10.0.2.3
+	// CLIENTE  --> pcT0(0) 10.0.2.2
+	NS_LOG_INFO("Create Applications.");
+	uint16_t port = 4000; // Need different port numbers to ensure there is no conflict
+
+	// Udp Server
+	UdpServerHelper server(port);
+	ApplicationContainer apps = server.Install(pcT0.Get(1));
+	apps.Start(Seconds(1.0));
+	apps.Stop(Seconds(10.0));
+
+	// Udp Client
+	uint32_t MaxPacketSize = 1024;
+	Time interPacketInterval = Seconds(0.05);
+	uint32_t maxPacketCount = 320;
+	UdpClientHelper client(iface_ndc_bridge_2.GetAddress(2), port);
+	client.SetAttribute("MaxPackets", UintegerValue(maxPacketCount));
+	client.SetAttribute("Interval", TimeValue(interPacketInterval));
+	client.SetAttribute("PacketSize", UintegerValue(MaxPacketSize));
+	apps = client.Install(pcT0.Get(0));
+	apps.Start(Seconds(2.0));
+	apps.Stop(Seconds(10.0));
 }
 
-/**
-@brief Instala las distintas aplicaciones que reciven/generan los datos entre los distintos nodos.
-*/
-void Simulation::InstallAplications() {
-	// pendiente...
+int Simulation::Run() {
+	createTopology();
+	installInternetStack();
+	installAplications();
+
+	FlowMonitorHelper flowmon;
+	Ptr<FlowMonitor> monitor = flowmon.InstallAll();
+
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables();
+	NS_LOG_INFO("Run Simulation");
+	Simulator::Stop(Seconds(12));
+	Simulator::Run();
+
+
+	monitor->CheckForLostPackets();
+
+	Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmon.GetClassifier());
+	std::map<FlowId, FlowMonitor::FlowStats> stats = monitor->GetFlowStats();
+	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin(); i != stats.end(); ++i)
+	{
+		Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(i->first);
+		if ((t.sourceAddress == "10.0.2.2" && t.destinationAddress == "110.0.2.3"))
+		{
+			std::cout << "Flow " << i->first << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\n";
+			std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
+			std::cout << "  Rx Bytes:   " << i->second.rxBytes << "\n";
+			std::cout << "  Throughput: " << i->second.rxBytes * 8.0 / (i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds()) / 1024 / 1024 << " Mbps\n";
+		}
+	}
+
+
+	monitor->SerializeToXmlFile("lab-1.flowmon", true, true);
+
+
+
+	Simulator::Destroy();
+
+	NS_LOG_INFO("Done :D");
+	return 0;
 }
 
 
+
 /**
-@brief Clase que crea un grafica en formato .plt
+  @brief Clase que crea un grafica en formato .plt
 */
 class PlotGNU {
 public:
@@ -504,11 +667,11 @@ private:
 };
 
 /**
-@brief Constructor de la clase PlotGNU
-@param filename Nombre del archivo a guardar (sin extensión)
-@param title Titulo de la gráfica
-@param xlabel Nombre del eje X
-@param ylabel Nombre del eje Y
+  @brief Constructor de la clase PlotGNU
+  @param filename Nombre del archivo a guardar (sin extensión)
+  @param title Titulo de la grafica
+  @param xlabel Nombre del eje X
+  @param ylabel Nombre del eje Y
 */
 PlotGNU::PlotGNU(string filename, string title, string xlabel, string ylabel) {
 	plotFileName = filename;
@@ -540,7 +703,7 @@ void PlotGNU::addData(double x, double y) {
 
 
 /**
-  @brief Crea y guarda la información del dataset en un archivo .plt
+  @brief Crea y guarda la informacion del dataset en un archivo .plt
 */
 void PlotGNU::generateOutput() {
 	// Creamos el archivo para guardar los datos
@@ -553,6 +716,7 @@ void PlotGNU::generateOutput() {
 	plotFile.close();
 }
 
+/*
 void ThroughputMonitor(FlowMonitorHelper *fmhelper, Ptr<FlowMonitor> flowMon, Gnuplot2dDataset DataSet) {
 	// NO ACABADO
 	Simulator::Schedule(Seconds(1), &ThroughputMonitor, fmhelper, flowMon, DataSet);
@@ -579,26 +743,12 @@ void ThroughputMonitor(FlowMonitorHelper *fmhelper, Ptr<FlowMonitor> flowMon, Gn
 	}
 	flowMon->SerializeToXmlFile("ThroughputMonitor.xml", true, true);
 }
+*/
+
 
 int main(int argc, char *argv[])
 {
-  CommandLine cmd;
-  cmd.Parse (argc, argv);
-
   Simulation s;
-
-
-  /* Generate Route. */
-  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
-
-  /* Generate Application. */
-
-  /* Simulation. */
-  /* Pcap output. */
-  /* Stop the simulation after x seconds. */
-  uint32_t stopTime = 1;
-  Simulator::Stop (Seconds (stopTime));
-  /* Start and clean simulation. */
-  Simulator::Run ();
-  Simulator::Destroy ();
+  s.Configure(argc, argv);
+  return s.Run();
 }
