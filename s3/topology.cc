@@ -10,15 +10,6 @@
 #include "ns3/bridge-module.h"
 #include "ns3/wifi-module.h"
 #include "ns3/mobility-module.h"
-
-/* ESTOS INCLIDE NO EXISTEN... 
-#include "ns3/simulator-module.h" 
-#include "ns3/node-module.h"
-#include "ns3/common-module.h"
-#include "ns3/helper-module.h"
-#include "ns3/contrib-module.h" 
-*/
-
 #include "ns3/core-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/network-module.h"
@@ -26,14 +17,13 @@
 #include "ns3/wifi-module.h"
 #include "ns3/mobility-module.h"
 #include "ns3/flow-monitor-module.h"
-#include "ns3/gnuplot.h"
 #include "ns3/flow-monitor-module.h"
-#include <ns3/flow-monitor-helper.h>
+#include "ns3/flow-monitor-helper.h"
 #include "ns3/csma-helper.h"
 #include <fstream>
+#include "PlotGNU.h"
 
 using namespace ns3;
-using namespace std;
 NS_LOG_COMPONENT_DEFINE ("Topologia");
 
 class Simulation {
@@ -596,7 +586,7 @@ void Simulation::installAplications() {
 	UdpServerHelper server(port);
 	ApplicationContainer apps = server.Install(pcT0.Get(1));
 	apps.Start(Seconds(1.0));
-	apps.Stop(Seconds(10.0));
+	apps.Stop(Seconds(4.0));
 
 	// Udp Client
 	uint32_t MaxPacketSize = 1024;
@@ -608,7 +598,7 @@ void Simulation::installAplications() {
 	client.SetAttribute("PacketSize", UintegerValue(MaxPacketSize));
 	apps = client.Install(pcT0.Get(0));
 	apps.Start(Seconds(2.0));
-	apps.Stop(Seconds(10.0));
+	apps.Stop(Seconds(4.0));
 }
 
 int Simulation::Run() {
@@ -621,7 +611,7 @@ int Simulation::Run() {
 
 	Ipv4GlobalRoutingHelper::PopulateRoutingTables();
 	NS_LOG_INFO("Run Simulation");
-	Simulator::Stop(Seconds(12));
+	Simulator::Stop(Seconds(5.0));
 	Simulator::Run();
 
 
@@ -632,7 +622,7 @@ int Simulation::Run() {
 	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin(); i != stats.end(); ++i)
 	{
 		Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(i->first);
-		if ((t.sourceAddress == "10.0.2.2" && t.destinationAddress == "110.0.2.3"))
+		if ((t.sourceAddress == "10.0.2.2" && t.destinationAddress == "10.0.2.3"))
 		{
 			std::cout << "Flow " << i->first << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\n";
 			std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
@@ -652,73 +642,6 @@ int Simulation::Run() {
 	return 0;
 }
 
-
-
-/**
-  @brief Clase que crea un grafica en formato .plt
-*/
-class PlotGNU {
-public:
-	//contructor
-	PlotGNU(string filename,string title,string xlabel,string ylabel);
-	void addData(double x, double y);
-	void generateOutput();
-
-private:
-	Gnuplot 	gnuplot;
-	Gnuplot2dDataset dataset;
-	string plotFileName;
-};
-
-/**
-  @brief Constructor de la clase PlotGNU
-  @param filename Nombre del archivo a guardar (sin extensión)
-  @param title Titulo de la grafica
-  @param xlabel Nombre del eje X
-  @param ylabel Nombre del eje Y
-*/
-PlotGNU::PlotGNU(string filename, string title, string xlabel, string ylabel) {
-	plotFileName = filename;
-	// Set the filename of and extension for the file 
-	gnuplot.SetOutputFilename(plotFileName + ".png");
-	gnuplot.SetTerminal("png");
-	
-	// Set the title and labels
-	gnuplot.SetTitle(title);
-	gnuplot.SetLegend(xlabel, ylabel);
-
-	// Customize the form to show data
-	dataset.SetTitle("data");
-	dataset.SetStyle(Gnuplot2dDataset::LINES_POINTS);
-
-	// Add the dataset to gnuplot
-	gnuplot.AddDataset(dataset);
-}
-
-
-/**
-  @brief Añade al dataset el valor y en la posicion x.
-  @param x Valor eje horizontal.
-  @param y Valor eje vertical.
-*/
-void PlotGNU::addData(double x, double y) {
-	dataset.Add(x, y);
-}
-
-
-/**
-  @brief Crea y guarda la informacion del dataset en un archivo .plt
-*/
-void PlotGNU::generateOutput() {
-	// Creamos el archivo para guardar los datos
-	std::ofstream plotFile((plotFileName +".plt").c_str());
-
-	// Guardamos los datos al archivo
-	gnuplot.GenerateOutput(plotFile);
-
-	// Cerramos el archivo
-	plotFile.close();
-}
 
 /*
 void ThroughputMonitor(FlowMonitorHelper *fmhelper, Ptr<FlowMonitor> flowMon, Gnuplot2dDataset DataSet) {
