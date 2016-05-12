@@ -11,10 +11,10 @@
 ## Uso
 Sincronizar este repositorio dentro de la carpeta scratch del simulador NS3
 
+**Antes de compilar y ejecutar, quitar la carpeta ejemplos de la carpeta scratch. Por ejemplo mover al escritorio.**
+
 Compilar y ejecuar con:
 ```sh
 ./waf
 ./waf --run s3
 ```
-
-Si da error, quitar la carpeta ejemplos de la carpeta scratch.
