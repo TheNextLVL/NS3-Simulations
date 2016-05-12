@@ -570,6 +570,8 @@ void Simulation::installInternetStack() {
 	// Router 1-2
 	ipv4.SetBase("10.0.15.0", "255.255.255.0");
 	iface_ndc_hub_6 = ipv4.Assign(ndc_r1_r2);
+
+	//Ipv4GlobalRoutingHelper::PopulateRoutingTables();
 }
 
 /**
@@ -577,28 +579,35 @@ void Simulation::installInternetStack() {
 */
 void Simulation::installAplications() {
 	// NO TERMINADO, solo prueba para ver si funciona el programa...
-	// SERVIDOR --> pcT0(1) 10.0.2.3
-	// CLIENTE  --> pcT0(0) 10.0.2.2
+	// SERVIDOR --> pcT0(0) 10.0.2.2
+	// CLIENTE  --> pcT0(1) 10.0.2.3
 	NS_LOG_INFO("Create Applications.");
-	uint16_t port = 4000; // Need different port numbers to ensure there is no conflict
 
-	// Udp Server
-	UdpServerHelper server(port);
-	ApplicationContainer apps = server.Install(pcT0.Get(1));
+	uint16_t port1 = 8000; // Need different port numbers to ensure there is no conflict
+	UdpServerHelper server1(port1);
+	ApplicationContainer apps;
+	apps = server1.Install(pcT1.Get(1));
+
 	apps.Start(Seconds(1.0));
-	apps.Stop(Seconds(4.0));
+	apps.Stop(Seconds(5.0));
 
-	// Udp Client
+	//
+	// Create one UdpClient application to send UDP datagrams from node zero to
+	// node one.
+	//
 	uint32_t MaxPacketSize = 1024;
-	Time interPacketInterval = Seconds(0.05);
+	Time interPacketInterval = Seconds(0.5);
 	uint32_t maxPacketCount = 320;
-	UdpClientHelper client(iface_ndc_bridge_2.GetAddress(2), port);
-	client.SetAttribute("MaxPackets", UintegerValue(maxPacketCount));
-	client.SetAttribute("Interval", TimeValue(interPacketInterval));
-	client.SetAttribute("PacketSize", UintegerValue(MaxPacketSize));
-	apps = client.Install(pcT0.Get(0));
+	UdpClientHelper client1(iface_ndc_bridge_3.GetAddress(3), port1);
+
+	client1.SetAttribute("MaxPackets", UintegerValue(maxPacketCount));
+	client1.SetAttribute("Interval", TimeValue(interPacketInterval));
+	client1.SetAttribute("PacketSize", UintegerValue(MaxPacketSize));
+
+	apps = client1.Install(pcT1.Get(0));
+
 	apps.Start(Seconds(2.0));
-	apps.Stop(Seconds(4.0));
+	apps.Stop(Seconds(5.0));
 }
 
 int Simulation::Run() {
@@ -609,7 +618,6 @@ int Simulation::Run() {
 	FlowMonitorHelper flowmon;
 	Ptr<FlowMonitor> monitor = flowmon.InstallAll();
 
-	Ipv4GlobalRoutingHelper::PopulateRoutingTables();
 	NS_LOG_INFO("Run Simulation");
 	Simulator::Stop(Seconds(5.0));
 	Simulator::Run();
@@ -622,7 +630,7 @@ int Simulation::Run() {
 	for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin(); i != stats.end(); ++i)
 	{
 		Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(i->first);
-		if ((t.sourceAddress == "10.0.2.2" && t.destinationAddress == "10.0.2.3"))
+		if (true) //(t.sourceAddress == "10.0.2.3")
 		{
 			std::cout << "Flow " << i->first << " (" << t.sourceAddress << " -> " << t.destinationAddress << ")\n";
 			std::cout << "  Tx Bytes:   " << i->second.txBytes << "\n";
