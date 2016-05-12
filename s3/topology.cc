@@ -364,15 +364,10 @@ void Simulation::createTopology() {
 	WifiHelper wifi_ap_0 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_0 = NqosWifiMacHelper::Default();
 	wifi_ap_0.SetRemoteStationManager("ns3::ArfWifiManager");
-/*	
-	wifiMac_ap_0.SetType("ns3::StaWifiMac",
+	wifiMac_ap_0.SetType("ns3::ApWifiMac",
 		"Ssid", SsidValue(ssid_ap_0),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
-*/
-	wifiMac_ap_0.SetType("ns3::StaWifiMac",
-		"Ssid", SsidValue(ssid_ap_0),
-		"ActiveProbing", BooleanValue(false)); /// CAMBIADO!
 
 	ndc_ap_0.Add(wifi_ap_0.Install(wifiPhy_ap_0, wifiMac_ap_0, ap.Get(0))); //instala wifi en el netDevice de ap0
 	
