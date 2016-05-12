@@ -30,6 +30,7 @@
 #include "ns3/flow-monitor-module.h"
 #include <ns3/flow-monitor-helper.h>
 #include "ns3/csma-helper.h"
+#include <fstream>
 
 using namespace ns3;
 using namespace std;
@@ -363,14 +364,22 @@ void Simulation::createTopology() {
 	WifiHelper wifi_ap_0 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_0 = NqosWifiMacHelper::Default();
 	wifi_ap_0.SetRemoteStationManager("ns3::ArfWifiManager");
+/*	
 	wifiMac_ap_0.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_0),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
+*/
+	wifiMac_ap_0.SetType("ns3::StaWifiMac",
+		"Ssid", SsidValue(ssid_ap_0),
+		"ActiveProbing", BooleanValue(false)); /// CAMBIADO!
+
 	ndc_ap_0.Add(wifi_ap_0.Install(wifiPhy_ap_0, wifiMac_ap_0, ap.Get(0))); //instala wifi en el netDevice de ap0
-	wifiMac_ap_0.SetType("ns3::NqstaWifiMac",
+	
+	wifiMac_ap_0.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_0),
 		"ActiveProbing", BooleanValue(false));
+
 	ndc_ap_0.Add(wifi_ap_0.Install(wifiPhy_ap_0, wifiMac_ap_0, all_ap_0)); //instala wifi en los netDevices de s0 y s1
 	MobilityHelper mobility_ap_0;
 	mobility_ap_0.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -384,12 +393,12 @@ void Simulation::createTopology() {
 	WifiHelper wifi_ap_1 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_1 = NqosWifiMacHelper::Default();
 	wifi_ap_1.SetRemoteStationManager("ns3::ArfWifiManager");
-	wifiMac_ap_1.SetType("ns3::StaWifiMac",
+	wifiMac_ap_1.SetType("ns3::ApWifiMac",
 		"Ssid", SsidValue(ssid_ap_1),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
 	ndc_ap_1.Add(wifi_ap_1.Install(wifiPhy_ap_1, wifiMac_ap_1, ap.Get(1)));
-	wifiMac_ap_1.SetType("ns3::NqstaWifiMac",
+	wifiMac_ap_1.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_1),
 		"ActiveProbing", BooleanValue(false));
 	ndc_ap_1.Add(wifi_ap_1.Install(wifiPhy_ap_1, wifiMac_ap_1, all_ap_1));
@@ -406,12 +415,12 @@ void Simulation::createTopology() {
 	WifiHelper wifi_ap_2 = WifiHelper::Default();
 	NqosWifiMacHelper wifiMac_ap_2 = NqosWifiMacHelper::Default();
 	wifi_ap_2.SetRemoteStationManager("ns3::ArfWifiManager");
-	wifiMac_ap_2.SetType("ns3::StaWifiMac",
+	wifiMac_ap_2.SetType("ns3::ApWifiMac",
 		"Ssid", SsidValue(ssid_ap_2),
 		"BeaconGeneration", BooleanValue(true),
 		"BeaconInterval", TimeValue(Seconds(2.5)));
 	ndc_ap_2.Add(wifi_ap_2.Install(wifiPhy_ap_2, wifiMac_ap_2, ap.Get(2)));
-	wifiMac_ap_2.SetType("ns3::NqstaWifiMac",
+	wifiMac_ap_2.SetType("ns3::StaWifiMac",
 		"Ssid", SsidValue(ssid_ap_2),
 		"ActiveProbing", BooleanValue(false));
 	ndc_ap_2.Add(wifi_ap_2.Install(wifiPhy_ap_2, wifiMac_ap_2, all_ap_2));
