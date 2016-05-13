@@ -180,6 +180,9 @@ void Simulacion::createTopology() {
 	nc_sw1.Add(p2pNodes.Get(1));
 	nc_sw1.Create(10);
 
+	nc_ap11.Add(p2pNodes.Get(2));
+//	nc_ap11.Create(2);
+
 	nc_sw8.Add(p2pNodes.Get(8));
 	nc_sw8.Create(10);
 
@@ -188,18 +191,25 @@ void Simulacion::createTopology() {
 
 	nc_sw10.Add(p2pNodes.Get(10));
 	nc_sw10.Create(5);
+
+	nc_ap11.Add(p2pNodes.Get(11));
+//	nc_ap11.Create(3);
 }
 
 void Simulacion::installInternetStack() {
 
 	// Instalamos internet en todos los nodos p2p y csma
-	istack.Install(p2pNodes);
-
+	// *NOTA: Solo 1 internet por dispositivo!!!. Primero todos csma y luego resto p2p (p2p son menos...)
+	for (int n = 3; n <8 ;n++)
+		istack.Install(p2pNodes.Get(n));
+	
 	istack.Install(nc_sw0);
 	istack.Install(nc_sw1);
+	istack.Install(nc_ap2);
 	istack.Install(nc_sw8);
 	istack.Install(nc_sw9);	
 	istack.Install(nc_sw10);
+	istack.Install(nc_ap11);
 
 	// Creamos los canales ente las redes p2p y asignamos distintos atributos
 	PointToPointHelper p2p_rs;
@@ -246,13 +256,15 @@ void Simulacion::installInternetStack() {
 
 	// Asignar direcciones IP
 	Ipv4AddressHelper ipv4;
-
+	std::cout << "INCIO IP! :D" << std::endl;
 	ipv4.SetBase("10.10.0.0", "255.255.255.0");
 	ic_r3s0 = ipv4.Assign(ndc_r3s0);
 	ipv4.SetBase("10.11.0.0", "255.255.255.0");
 	ic_r3s1 = ipv4.Assign(ndc_r3s1);
 	ipv4.SetBase("10.12.0.0", "255.255.255.0");
 	ic_r3s2 = ipv4.Assign(ndc_r3s2);
+
+	std::cout << "FIN BLOQUE 1" << std::endl;
 
 	ipv4.SetBase("10.30.0.0", "255.255.255.0");
 	ic_r6r3 = ipv4.Assign(ndc_r6r3);
@@ -271,7 +283,6 @@ void Simulacion::installInternetStack() {
 	ic_r7s10 = ipv4.Assign(ndc_r7s10);
 	ipv4.SetBase("10.23.0.0", "255.255.255.0");
 	ic_r7s11 = ipv4.Assign(ndc_r7s11);
-
 
 	ipv4.SetBase("10.0.10.0", "255.255.255.0");
 	ic_sw0 = ipv4.Assign(ndc_sw0);
